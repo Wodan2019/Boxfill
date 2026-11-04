@@ -4,174 +4,233 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Box Fill Lab · CEC 2024</title>
-<link rel="stylesheet" href="screen.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@600;700&display=swap">
 <style>
-/* App layout, layered on top of screen.css. Colours come from the MSE scheme in screen.css. */
 :root{
-  --mse:#007f64;--mse-dark:#005c49;--mse-soft:#e3f1ed;
-  --ink:#535557;--muted:#6a6c6e;--line:#aaabab;--panel:#fff;--panel-2:#f4f5f5;
-  --ok:#1e7a3a;--ok-bg:#e4f3e8;--bad:#aa272f;--bad-bg:#fbeaea;--warn:#7a5200;--warn-bg:#fff2cf;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#e7ebef;--panel:#ffffff;--panel-2:#f2f5f7;--ink:#15202a;--muted:#51616d;--line:#ccd6dd;
+  --accent:#0a6a72;--accent-2:#08545b;--on-accent:#ffffff;--accent-soft:#d8edef;
+  --ok:#17703d;--ok-bg:#e0f3e7;--bad:#ac2a22;--bad-bg:#fcebe9;--warn:#734f00;--warn-bg:#fff2cf;
+  --head:#0f2f35;--head-ink:#eaf5f6;--shadow:0 1px 2px rgba(15,30,42,.08),0 8px 22px rgba(15,30,42,.07);
+  --head-font:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif;
+  --body-font:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
 }
-/* screen.css zeroes line-height on html and body, which form controls and divs inherit */
-body{line-height:1.45;font-size:18px;color:var(--ink);padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#10161b;--panel:#19222a;--panel-2:#202b34;--ink:#e7eef2;--muted:#9fb0bb;--line:#2e3b45;
+    --accent:#55c2c8;--accent-2:#7bd3d8;--on-accent:#05272b;--accent-soft:#153238;
+    --ok:#62d38f;--ok-bg:#123222;--bad:#ff8d84;--bad-bg:#3a1816;--warn:#f2c45a;--warn-bg:#362a0b;
+    --head:#0a1d21;--head-ink:#e2f1f2;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10161b;--panel:#19222a;--panel-2:#202b34;--ink:#e7eef2;--muted:#9fb0bb;--line:#2e3b45;
+  --accent:#55c2c8;--accent-2:#7bd3d8;--on-accent:#05272b;--accent-soft:#153238;
+  --ok:#62d38f;--ok-bg:#123222;--bad:#ff8d84;--bad-bg:#3a1816;--warn:#f2c45a;--warn-bg:#362a0b;
+  --head:#0a1d21;--head-ink:#e2f1f2;--shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.3);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
 *,*::before,*::after{box-sizing:border-box}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--body-font);-webkit-text-size-adjust:100%}
+h1,h2,h3{font-family:var(--head-font);line-height:1.15;margin:0}
+h2{font-size:22px}
+h3{font-size:17px;margin:20px 0 8px}
+p{margin:0 0 10px}
 button,input,select{font:inherit;color:inherit}
-:focus-visible{outline:3px solid var(--mse);outline-offset:2px}
-main{padding:20px 0 40px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* header */
+.top{background:var(--head);color:var(--head-ink)}
+.top-in{max-width:1180px;margin:0 auto;padding:18px 20px 0}
+.brand{display:flex;align-items:center;gap:14px}
+.brand svg{flex:none}
+.brand h1{font-size:30px;font-weight:700;letter-spacing:.2px}
+.brand p{margin:2px 0 0;color:color-mix(in srgb,var(--head-ink) 72%,transparent);font-size:14px}
+.tabs{display:flex;gap:4px;margin-top:16px;overflow-x:auto}
+.tab{appearance:none;border:0;background:transparent;color:color-mix(in srgb,var(--head-ink) 75%,transparent);padding:11px 18px;font:600 15px var(--body-font);border-radius:10px 10px 0 0;cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--bg);color:var(--ink)}
+.tab:not([aria-selected="true"]):hover{color:var(--head-ink);background:color-mix(in srgb,var(--head-ink) 10%,transparent)}
+
+main{max-width:1180px;margin:0 auto;padding:20px 20px 56px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
 .muted{color:var(--muted)}
-.small{font-size:13px}
+.small{font-size:13.5px}
 .hidden{display:none!important}
-.scroll{overflow-x:auto}
-
-/* tabs sit under the h1/h2 banner */
-.tabs{display:flex;gap:0;margin-top:15px;border-bottom:2px solid var(--mse);overflow-x:auto}
-.tab{appearance:none;border:0;background:transparent;color:var(--mse);padding:11px 18px;font-weight:bold;text-transform:uppercase;cursor:pointer;white-space:nowrap}
-.tab[aria-selected="true"]{background:var(--mse);color:#fff}
-.tab:not([aria-selected="true"]):hover{background:var(--mse-soft)}
-
-/* panels */
-.card{background:var(--panel);border:1px solid var(--line);padding:20px}
-.card h3{margin-top:24px}
-.card>h3:first-child{margin-top:0}
-.solution{margin-top:18px}
-.solution h3{margin-top:0}
+.usage{max-width:760px;margin:0 auto}
+.usage h2{margin-top:0}
+.stats{display:flex;gap:12px;margin:12px 0}
+.stat b{display:block;font-size:30px}
 
 /* controls */
 .toolbar{display:flex;flex-wrap:wrap;gap:12px 14px;align-items:flex-end;margin-bottom:14px}
 .ctl{display:flex;flex-direction:column;gap:4px;min-width:170px;flex:1 1 170px}
-.ctl label,.field label,legend{font-weight:bold;color:var(--muted)}
-select,input[type=text],input[type=number]{width:100%;height:40px;padding:0 10px;border:1px solid var(--line);border-radius:2px;background:#fff;color:var(--ink)}
+.ctl label,.field label,legend{font-size:13.5px;font-weight:600;color:var(--muted)}
+select,input[type=text],input[type=number]{width:100%;height:42px;padding:0 11px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
 input.bad{border-color:var(--bad);background:var(--bad-bg)}
 input.good{border-color:var(--ok);background:var(--ok-bg)}
-.btn{appearance:none;border:1px solid var(--line);background:#fff;color:var(--ink);height:40px;padding:0 18px;border-radius:2px;font-weight:bold;cursor:pointer}
-.btn:hover{border-color:var(--mse);color:var(--mse)}
-.btn.primary{background:var(--mse);border-color:var(--mse);color:#fff}
-.btn.primary:hover{background:var(--mse-dark);border-color:var(--mse-dark);color:#fff}
+.btn{appearance:none;border:1px solid var(--line);background:var(--panel);color:var(--ink);height:42px;padding:0 18px;border-radius:8px;font-weight:600;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.primary:hover{background:var(--accent-2);border-color:var(--accent-2)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .toolbar .btn{flex:0 0 auto}
-.chkwrap{flex:0 1 auto;min-width:0;justify-content:flex-end}
-.chkl{display:flex;align-items:center;gap:8px;min-height:40px;font-weight:bold;color:var(--ink);cursor:pointer}
-.chkl input{width:18px;height:18px;accent-color:var(--mse)}
 
-.scorebar{display:flex;flex-wrap:wrap;gap:8px 22px;color:var(--muted);margin:0 0 16px;padding:10px 14px;background:var(--panel-2);border:1px solid var(--line)}
+.scorebar{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:14px;color:var(--muted);margin:0 0 16px;padding:10px 14px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px}
 .scorebar b{color:var(--ink);font-variant-numeric:tabular-nums}
 
 /* practice layout */
 .practice{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:20px;align-items:start}
-.fig{position:sticky;top:12px;padding:14px;line-height:1.45}
+.fig{position:sticky;top:12px;padding:14px}
 .fig-cap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 12px;margin:0 2px 10px}
-.fig-cap strong{font-size:16px}
-.fig svg{display:block;width:100%;height:auto;border:1px solid var(--line)}
+.fig-cap strong{font-family:var(--head-font);font-size:19px}
+.fig svg{display:block;width:100%;height:auto;border-radius:9px;border:1px solid var(--line)}
 .fig-note{margin:10px 2px 0}
 
-.q-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:12px;border-bottom:2px solid var(--mse)}
-.q-head h3{width:auto;margin:0;border:0;padding-bottom:4px}
-.tries{display:flex;align-items:center;gap:8px;font-weight:bold;color:var(--muted);padding-bottom:4px}
+.q-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.tries{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--muted)}
 .dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);background:transparent}
 .dot.hit{background:var(--ok);border-color:var(--ok)}
 .dot.miss{background:var(--bad);border-color:var(--bad)}
-.inv{list-style:none;margin:0 0 16px;padding:0;border:1px solid var(--line)}
-.inv li{display:flex;gap:12px;margin-left:0;list-style:none;padding:10px 12px;border-bottom:1px solid var(--line)}
+.inv{list-style:none;margin:0 0 16px;padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.inv li{display:flex;gap:12px;padding:10px 12px;border-bottom:1px solid var(--line);font-size:15px}
 .inv li:last-child{border-bottom:0}
 .inv li:nth-child(even){background:var(--panel-2)}
-.tag{flex:none;min-width:26px;height:26px;background:var(--mse-soft);color:var(--mse-dark);font:bold 13px/26px Arial,Helvetica,sans-serif;text-align:center;padding:0 5px}
-.ask{font-weight:bold;margin:0 0 12px}
+.tag{flex:none;min-width:26px;height:26px;border-radius:6px;background:var(--accent-soft);color:var(--accent-2);font:700 14px/26px var(--head-font);text-align:center;padding:0 5px}
+.ask{font-weight:600;font-size:16px;margin:0 0 12px}
 .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:12px}
 .field{display:flex;flex-direction:column;gap:4px}
 fieldset{border:0;margin:0 0 14px;padding:0}
+.segs{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.seg{position:relative}
+.seg input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.seg span{display:block;padding:10px 16px;border:1px solid var(--line);border-radius:8px;font-weight:600;background:var(--panel)}
+.seg input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.seg input:focus-visible+span{outline:3px solid var(--accent);outline-offset:2px}
+.seg input:disabled+span{opacity:.6}
+.seg.good span{box-shadow:0 0 0 2px var(--ok)}
+.seg.bad span{box-shadow:0 0 0 2px var(--bad)}
 .actions{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 0}
 
-.notice{margin-top:16px;padding:13px 15px;border:1px solid var(--line)}
-.notice.ok{background:var(--ok-bg);border-color:var(--ok)}
-.notice.bad{background:var(--bad-bg);border-color:var(--bad)}
-.notice.warn{background:var(--warn-bg);border-color:var(--warn)}
+.notice{margin-top:16px;padding:13px 15px;border-radius:10px;border:1px solid var(--line);font-size:15px}
+.notice.ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.notice.bad{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.notice.warn{background:var(--warn-bg);border-color:var(--warn);color:var(--warn)}
 .notice b{display:block;margin-bottom:3px}
+.notice ul{margin:6px 0 0;padding-left:20px}
+.notice.ok,.notice.bad,.notice.warn{color:var(--ink)}
 .notice.ok b{color:var(--ok)}.notice.bad b{color:var(--bad)}.notice.warn b{color:var(--warn)}
-.notice ul{margin:6px 0 0;padding:0}
-.notice li{margin-left:40px}
 
-/* tables: borders and padding come from screen.css */
-table{width:100%}
-th{text-align:left;background:var(--panel-2)}
+.solution{margin-top:18px}
+.solution h3{margin-top:0}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:13.5px}
 td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-tr.total td{font-weight:bold;border-top:2px solid var(--mse)}
-tr.hit td{background:var(--ok-bg)}
-.res-ok{color:var(--ok)}.res-bad{color:var(--bad)}.res-mid{color:var(--warn)}
-.verdict-line{margin-top:12px;padding:12px 14px;font-weight:bold}
+tr.total td{font-weight:700;border-top:2px solid var(--ink);border-bottom:0}
+.verdict-line{margin-top:12px;padding:12px 14px;border-radius:10px;font-weight:600}
 .verdict-line.ok{background:var(--ok-bg);color:var(--ok)}
 .verdict-line.bad{background:var(--bad-bg);color:var(--bad)}
-.excl,.note{margin:12px 0;padding:10px 12px;background:var(--panel-2);border-left:4px solid var(--mse)}
+.excl{margin-top:12px;padding:10px 12px;background:var(--panel-2);border-radius:10px;border-left:4px solid var(--accent);font-size:14.5px}
 .rulechips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-.chip{font-size:12px;font-weight:bold;padding:3px 9px;border-radius:2px;background:var(--mse-soft);color:var(--mse-dark)}
+.chip{font-size:12.5px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent-2)}
 
-/* radio choices */
-.segs{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+
+/* box choices */
 .choices{display:grid;gap:8px;margin-top:6px}
 .choice{position:relative;display:block}
 .choice input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
-.choice>span{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;padding:11px 14px;border:1px solid var(--line);background:#fff;font-weight:bold}
-.choice>span .cx{font-weight:normal;color:var(--muted)}
-.choice input:checked+span{background:var(--mse-soft);border-color:var(--mse);box-shadow:0 0 0 2px var(--mse)}
-.choice input:focus-visible+span{outline:3px solid var(--mse);outline-offset:2px}
+.choice>span{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;padding:11px 14px;border:1px solid var(--line);border-radius:8px;background:var(--panel);font-weight:600}
+.choice>span .cx{font-weight:500;color:var(--muted);font-size:14px}
+.choice input:checked+span{background:var(--accent-soft);border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.choice input:focus-visible+span{outline:3px solid var(--accent);outline-offset:2px}
 .choice input:disabled{cursor:default}
 .choice.good>span{background:var(--ok-bg);border-color:var(--ok);box-shadow:0 0 0 2px var(--ok)}
 .choice.bad>span{background:var(--bad-bg);border-color:var(--bad);box-shadow:0 0 0 2px var(--bad)}
 .choice.answer>span{border-color:var(--ok);box-shadow:0 0 0 2px var(--ok)}
+.chkwrap{flex:0 1 auto;min-width:0;justify-content:flex-end}
+.chkl{display:flex;align-items:center;gap:8px;min-height:42px;font-size:14.5px;font-weight:600;color:var(--ink);cursor:pointer}
+.chkl input{width:20px;height:20px;accent-color:var(--accent)}
+tr.hit td{background:var(--ok-bg)}
+.res-ok{color:var(--ok)}.res-bad{color:var(--bad)}.res-mid{color:var(--warn)}
 
 /* calculator */
 .calc{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:20px;align-items:start}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
-.stat{background:var(--panel-2);border:1px solid var(--line);padding:10px 12px}
-.stat small{display:block;color:var(--muted);font-size:12px}
-.stat strong{font-size:20px;font-variant-numeric:tabular-nums}
-.result{padding:14px 16px;margin-bottom:12px}
-.result strong{display:block;font-size:24px}
+.stat{background:var(--panel-2);border-radius:10px;padding:10px 12px}
+.stat small{display:block;color:var(--muted);font-size:12.5px}
+.stat strong{font:700 20px var(--head-font);font-variant-numeric:tabular-nums}
+.result{border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.result strong{font:700 26px var(--head-font);display:block}
 .result.pass{background:var(--ok-bg);color:var(--ok)}
 .result.fail{background:var(--bad-bg);color:var(--bad)}
-.meter{height:14px;background:var(--panel-2);border:1px solid var(--line);overflow:hidden;margin-bottom:6px}
-.bar{height:100%;background:var(--mse);transition:width .2s}
+.meter{height:14px;background:var(--panel-2);border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-bottom:6px}
+.bar{height:100%;background:var(--accent);transition:width .2s}
 .bar.over{background:var(--bad)}
 .sectionline{border-top:1px solid var(--line);margin:16px 0}
+.note{background:var(--panel-2);border-left:4px solid var(--accent);border-radius:8px;padding:11px 13px;font-size:14.5px;margin:12px 0}
 
 /* reference */
 .ref-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:20px;align-items:start}
-.ref-t th.grp{background:var(--mse-soft);color:var(--mse-dark)}
-.legend-fine{font-size:13px;color:var(--muted);margin-top:14px}
+.scroll{overflow-x:auto}
+.ref-t th.grp{background:var(--panel-2);color:var(--ink);font-family:var(--head-font);font-size:15px}
+.legend-fine{font-size:13.5px;color:var(--muted);margin-top:14px}
 
 @media (max-width:980px){
   .practice,.calc,.ref-grid{grid-template-columns:1fr}
   .fig{position:static}
 }
-@media (max-width:700px){
-  body{padding-left:16px;padding-right:16px}
-}
 @media (max-width:560px){
+  .brand h1{font-size:25px}
   .stats{grid-template-columns:repeat(2,1fr)}
   .grid3{grid-template-columns:1fr 1fr}
+  main{padding:14px 12px 44px}
   .card{padding:15px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
+<script data-goatcounter="https://wodan2019.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
-<body id="mse">
-<head>
-  <h1>Box Fill Lab</h1>
-  <h2>2024 Canadian Electrical Code, Rule 12-3034, Tables 22 and 23</h2>
-  <nav class="tabs" role="tablist" aria-label="Sections">
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <svg width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
+        <polygon points="14,3 32,3 43,14 43,32 32,43 14,43 3,32 3,14" fill="#c9d2d9" stroke="#e9eef1" stroke-width="2"/>
+        <polygon points="16,9 30,9 37,16 37,30 30,37 16,37 9,30 9,16" fill="#7f8c96"/>
+        <circle cx="23" cy="23" r="6" fill="#f0a22b"/><circle cx="23" cy="23" r="2.4" fill="#8d4f0a"/>
+      </svg>
+      <div>
+        <h1>Box Fill Lab</h1>
+        <p>Electrical box fill practice</p>
+      </div>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Sections">
       <button class="tab" role="tab" id="tabBtn-practice" aria-selected="true" aria-controls="tab-practice" data-tab="practice">Practice</button>
-     </nav>
-</head>
+      <button class="tab" role="tab" id="tabBtn-usage" aria-selected="false" aria-controls="tab-usage" data-tab="usage">Usage</button>
+    </div>
+  </div>
+</header>
 
 <main>
 <!-- PRACTICE -->
 <section id="tab-practice" role="tabpanel" aria-labelledby="tabBtn-practice">
   <div class="toolbar">
+    <div class="ctl"><label for="year">Year</label>
+      <select id="year">
+        <option value="y1" selected>1st year</option>
+        <option value="y2">2nd year</option>
+        <option value="y4">4th year</option>
+      </select></div>
     <div class="ctl"><label for="method">Method</label>
       <select id="method">
-        <option value="vol">Table 22 · usable space in mL</option>
-        <option value="count">Table 23 · conductor count</option>
+        <option value="vol">Volume method · usable space in mL</option>
+        <option value="count">Count method · conductor count</option>
       </select></div>
     <div class="ctl"><label for="difficulty">Difficulty</label>
       <select id="difficulty">
@@ -179,14 +238,6 @@ tr.hit td{background:var(--ok-bg)}
         <option value="standard" selected>Standard · devices, studs, connectors</option>
         <option value="mixed">Mixed · two wire sizes under one connector</option>
         <option value="advanced">Advanced · deep devices, through runs, insulated bonds</option>
-      </select></div>
-    <div class="ctl"><label for="boxFilter">Choose from</label>
-      <select id="boxFilter">
-        <option value="all">All Table 23 box types</option>
-        <option value="junction">Junction and ceiling boxes</option>
-        <option value="device">Device boxes</option>
-        <option value="masonry">Masonry boxes</option>
-        <option value="cast">Cast FS and FD boxes</option>
       </select></div>
     <div class="ctl chkwrap"><label class="chkl" for="showVol"><input type="checkbox" id="showVol"> Show volumes with the choices</label></div>
     <button class="btn primary" id="newQ" type="button">New question</button>
@@ -197,17 +248,17 @@ tr.hit td{background:var(--ok-bg)}
     <figure class="card fig" style="margin:0">
       <div class="fig-cap"><strong id="figTitle"></strong><span class="muted small" id="figSub"></span></div>
       <div id="figure"></div>
-      <p class="fig-note muted small">The box is drawn at one size only, to show the wiring; the box size is your answer. Tags match the contents list. The dots on each tag show the conductors in that cable: black, white, red, green (insulated bond) and a copper ring (bare bond). On a receptacle, white goes to the silver screw on the left and black or red to the brass screw on the right. Drawn for clarity, not to scale.</p>
+      <p class="fig-note muted small">The box is drawn at one size only, to show the wiring; the box size is your answer. Every conductor in each cable stays in the box, and each cable jacket ends at the box clamp. Each tag names the cable and its size; the dots show the conductors in that cable: black, white, red, green (insulated bond) and a copper ring (bare bond). On a receptacle, white goes to the silver screw on the left and black or red to the brass screw on the right. Drawn for clarity, not to scale.</p>
     </figure>
 
     <article class="card" id="qCard" aria-live="off">
       <div class="q-head">
-        <h3 id="qTitle">Question</h3>
+        <h2 id="qTitle">Question</h2>
         <div class="tries" id="tries"></div>
       </div>
       <p class="muted" id="qLead"></p>
-      <ul class="inv" id="inv"></ul>
-      <p class="ask" id="ask"></p>
+      <ul class="inv hidden" id="inv"></ul>
+      <p class="ask hidden" id="ask"></p>
       <form id="ansForm" novalidate>
         <div class="fields" id="fields"></div>
         <fieldset id="choiceSet"><legend>Which box should be used? Choose the smallest box that is big enough.</legend><div class="choices" id="choices"></div></fieldset>
@@ -223,81 +274,25 @@ tr.hit td{background:var(--ok-bg)}
   </div>
 </section>
 
-<!-- CALCULATOR -->
-<section id="tab-calc" role="tabpanel" aria-labelledby="tabBtn-calc" class="hidden">
-  <div class="calc">
-    <div class="card">
-      <h3>Build a box</h3>
-      <p class="muted small" style="margin-top:6px">Enter what is in the box and the calculator updates as you type.</p>
-      <div class="grid2">
-        <div class="field"><label for="bMethod">Method</label>
-          <select id="bMethod"><option value="vol">Table 22 · usable space in mL</option><option value="count">Table 23 · conductor count</option></select></div>
-        <div class="field"><label for="bBox">Box</label><select id="bBox"></select></div>
-      </div>
-      <div class="field hidden" id="bCustomWrap" style="margin-top:12px"><label for="bCustom">Marked usable volume (mL)</label><input id="bCustom" type="number" min="1" value="300"></div>
-      <div class="sectionline"></div>
-      <h3 style="margin-top:0">Insulated conductors</h3>
-      <p class="muted small">One for each insulated conductor entering or leaving and connected in the box. A conductor running through uncut counts once. Include insulated bonding conductors.</p>
-      <div class="grid3" id="bConductors"></div>
-      <h3>Other items</h3>
-      <div class="grid3">
-        <div class="field"><label for="bCaps">Wire connectors with insulating caps</label><input id="bCaps" type="number" min="0" value="0"></div>
-        <div class="field"><label for="bCapAwg">Largest wire under connectors</label><select id="bCapAwg"></select></div>
-        <div class="field"><label for="bStuds">Fixture studs or hickeys</label><input id="bStuds" type="number" min="0" value="0"></div>
-        <div class="field"><label for="bDevices">Flush devices on a single strap</label><input id="bDevices" type="number" min="0" value="0"></div>
-        <div class="field"><label for="bDevAwg">Largest wire at devices</label><select id="bDevAwg"></select></div>
-        <div class="field"><label for="bDeepN">Devices deeper than 2.54 cm</label><input id="bDeepN" type="number" min="0" value="0"></div>
-        <div class="field"><label for="bDepth">Depth of those devices (cm)</label><input id="bDepth" type="number" min="0" step="0.1" value="3.2"></div>
-        <div class="field"><label for="bBare">Bare bonding conductors</label><input id="bBare" type="number" min="0" value="0"></div>
-        <div class="field"><label for="bPig">Pigtails wholly inside</label><input id="bPig" type="number" min="0" value="0"></div>
-      </div>
-      <div class="note">Bare bonding conductors and pigtails that never leave the box are shown so you can see they add nothing. Rule 12-3034(1)(c).</div>
-      <button class="btn" id="bReset" type="button">Reset</button>
-    </div>
-    <div class="card">
-      <h3>Result</h3>
-      <div class="stats" style="margin-top:12px">
-        <div class="stat"><small>Required</small><strong id="rReq">0</strong></div>
-        <div class="stat"><small>Available</small><strong id="rAvail">0</strong></div>
-        <div class="stat"><small>Used</small><strong id="rPct">0%</strong></div>
-        <div class="stat"><small>Margin</small><strong id="rMargin">0</strong></div>
-      </div>
-      <div class="result pass" id="rStatus"></div>
-      <div class="meter"><div class="bar" id="rBar" style="width:0"></div></div>
-      <h3>Breakdown</h3>
-      <table><thead><tr><th>Item</th><th class="n">mL</th></tr></thead><tbody id="rRows"></tbody></table>
-      <div class="note" id="rNote"></div>
-    </div>
-  </div>
-</section>
 
-<!-- REFERENCE -->
-<section id="tab-ref" role="tabpanel" aria-labelledby="tabBtn-ref" class="hidden">
-  <div class="ref-grid">
-    <div>
-      <div class="card">
-        <h3>Table 22</h3>
-        <p class="muted small" style="margin-top:6px">Space per insulated conductor</p>
-        <table style="margin-top:8px"><thead><tr><th>Size</th><th class="n">mL</th><th class="n">in³</th></tr></thead><tbody id="t22body"></tbody></table>
-      </div>
-      <div class="card" style="margin-top:20px">
-        <h3>Rule 12-3034 at a glance</h3>
-        <ol class="small" style="margin:10px 0 0">
-          <li><b>(1)</b> Count each insulated conductor that enters or leaves and ends at a terminal or connector. A conductor running through uncut counts once. A conductor that starts and ends inside the box is not counted.</li>
-          <li style="margin-top:6px"><b>(2)</b> Table 23 limits, reduced by: one for each fixture stud or hickey, one for each pair of insulating-cap connectors, two for each flush device on a single strap.</li>
-          <li style="margin-top:6px"><b>(3)</b> A device more than 2.54 cm from strap to back uses extra space: 32 cm³ for each centimetre of its depth.</li>
-          <li style="margin-top:6px"><b>(4)</b> Boxes not in Table 23, or mixed wire sizes, use Table 22 volumes, with the same Subrule (2) allowances.</li>
-          <li style="margin-top:6px"><b>(5) and (6)</b> Usable space is the internal volume. Ganged sections and marked rings add their marked volumes.</li>
-        </ol>
-        <p class="legend-fine">This is a study summary, not the rule text. Your 2024 codebook and Appendix B decide.</p>
-      </div>
-    </div>
-    <div class="card">
-      <h3>Table 23</h3>
-      <p class="muted small" style="margin-top:6px">Box volume and maximum number of insulated conductors of one size</p>
-      <div class="scroll"><table class="ref-t" style="margin-top:8px"><thead><tr><th>Box</th><th class="n">mL</th><th class="n">in³</th><th class="n">No. 14</th><th class="n">No. 12</th><th class="n">No. 10</th><th class="n">No. 8</th><th class="n">No. 6</th></tr></thead><tbody id="t23body"></tbody></table></div>
-      <p class="legend-fine">Maximums here are the box volume divided by the Table 22 space for each size, rounded down. That matches the printed Table 23 rows I could cross-check. If a row in your 2024 book differs, your book wins.</p>
-    </div>
+<!-- USAGE (password protected) -->
+<section id="tab-usage" role="tabpanel" aria-labelledby="tabBtn-usage" class="hidden">
+  <div class="card usage" id="usageLock">
+    <h2>Usage</h2>
+    <p class="muted">Enter the password to see how often this tool is used.</p>
+    <form id="pwForm" autocomplete="off">
+      <div class="field"><label for="pw">Password</label><input id="pw" type="password" autocomplete="off"></div>
+      <div class="actions"><button class="btn primary" type="submit">Unlock</button></div>
+      <p class="notice bad hidden" id="pwErr" role="alert"><b>Wrong password.</b>Try again.</p>
+    </form>
+  </div>
+  <div class="card usage hidden" id="usageBody">
+    <h2>Usage</h2>
+    <div class="stats" id="usageStats"><div class="stat"><b id="uTotal">…</b><span class="muted small">page views, all time</span></div></div>
+    <p><a class="btn primary" href="https://wodan2019.goatcounter.com" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;text-decoration:none">Open the full GoatCounter dashboard</a>
+    <button class="btn" type="button" id="lockBtn">Lock</button></p>
+    <p class="muted small" id="uNote"></p>
+    <iframe id="uFrame" title="GoatCounter dashboard" style="width:100%;height:640px;border:1px solid var(--line);border-radius:10px;background:var(--panel)" loading="lazy"></iframe>
   </div>
 </section>
 </main>
@@ -425,7 +420,7 @@ const evaluate=s=>{const d=derive(s);return s.method==='count'?calcCount(s,d):ca
    ===================================================================== */
 function familyOf(s){
   const box=boxOf(s.boxId);
-  let f=BOXES.filter(b=>b.group===box.group);
+  let f=BOXES.filter(b=>b.group===box.group&&inScope(b,s.scope||'all'));
   if(box.cast){const n=Math.max(1,s.devices);f=f.filter(b=>b.gangs>=n&&(n<2||!b.tandem));}
   return f;
 }
@@ -445,16 +440,18 @@ function plan(s,ev){
 /* =====================================================================
    QUESTION GENERATOR
    ===================================================================== */
-let qSerial=0,bag=[];
+/* 1st year: octagon boxes, single device boxes and 4 in. square (4 x 4) boxes. Other years: every box in Table 23. */
+const inScope=(b,f)=>f==='y1'?(b.kind==='oct'||b.group==='device'||b.kind==='sq'):(f==='all'||f==='y2'||f==='y4'||b.group===f);
+let CUR_FILTER='all',qSerial=0,bag=[];
 function nextBox(filter){
-  const pool=BOXES.filter(b=>filter==='all'||b.group===filter);
+  const pool=BOXES.filter(b=>inScope(b,filter));
   bag=bag.filter(id=>pool.some(b=>b.id===id));
   if(!bag.length)bag=shuffle(pool.map(b=>b.id));
   return boxOf(bag.pop());
 }
 function candidate(box,diff,method){
   const cast=!!box.cast,devCapable=box.kind==='dev'||box.kind==='mas'||(cast&&!box.tandem),adv=diff==='advanced';
-  const s={seed:rand(1,2e9),diff,method,boxId:box.id,entries:[],throughs:null,studs:0,studKind:null,devices:0,devKind:null,depth:0,deep:false,mixed:false,L:14,S:null};
+  const s={scope:CUR_FILTER,seed:rand(1,2e9),diff,method,boxId:box.id,entries:[],throughs:null,studs:0,studKind:null,devices:0,devKind:null,depth:0,deep:false,mixed:false,L:14,S:null};
   s.mixed=method==='vol'&&(diff==='mixed'||(adv&&Math.random()<.5));
   if(diff!=='basic'&&devCapable&&!s.mixed)s.devices=(cast&&box.gangs>=2)?pick([1,2]):1;
   if(box.kind==='oct'||box.kind==='round'){s.studs=1;s.studKind=Math.random()<.65?'stud':'hickey';}
@@ -488,7 +485,7 @@ function valid(s,d){
   return true;
 }
 function generate(diff,method,filter,depth){
-  depth=depth||0;
+  depth=depth||0;CUR_FILTER=filter;
   const box=nextBox(filter);
   let best=null;
   for(let t=0;t<500;t++){
@@ -517,7 +514,7 @@ function generate(diff,method,filter,depth){
 /* =====================================================================
    QUESTION TEXT
    ===================================================================== */
-const DEVNAME={duplex:'15 A duplex receptacle',duplex20:'20 A duplex receptacle',single:'15 A single receptacle',single20:'20 A single receptacle',gfci:'15 A GFCI receptacle',gfci20:'20 A GFCI receptacle'};
+const DEVNAME={duplex:'duplex receptacle',duplex20:'duplex receptacle',single:'single receptacle',single20:'single receptacle',gfci:'GFCI receptacle',gfci20:'GFCI receptacle'};
 const devName=s=>DEVNAME[s.devKind]||'duplex receptacle';
 function entryRole(i){return i===0?'Supply':'Load';}
 function describe(s){
@@ -553,10 +550,9 @@ function askText(s){
     :'Use Rule 12-3034 and Table 22. Calculate the usable space required, then choose the smallest box that has enough space.';
 }
 function leadText(s){
-  const mix=s.mixed?` The conductors are a mix of No. ${s.L} and No. ${s.S} AWG, so Table 22 applies.`:'';
   return s.method==='count'
-    ?`Choose the box for the contents below. All insulated conductors are No. ${s.L} AWG. Nothing is in the box except the items listed.`
-    :`Choose the box for the contents below.${mix} Nothing is in the box except the items listed.`;
+    ?'Study the diagram. Count the insulated conductors, work out the total to fit, then choose the smallest box that is big enough.'
+    :'Study the diagram. Work out the usable space the conductors need, then choose the smallest box that is big enough.';
 }
 function figTitleText(s){return(GROUPS.find(g=>g[0]===boxOf(s.boxId).group)||[0,'Boxes'])[1];}
 
@@ -661,7 +657,7 @@ function choicesTable(s,ev){
 }
 function solutionHTML(s){
   const d=derive(s),L=s.L;
-  let h='';
+  let h=`<h3>What was in the box</h3><ul class="inv">${describe(s).map(it=>`<li><span class="tag">${it.tag}</span><span>${it.html}</span></li>`).join('')}</ul><p class="ask">${askText(s)}</p>`;
   const excl=[];
   if(d.bare)excl.push(`${d.bare} bare bonding ${plural(d.bare,'conductor')} in the cables`);
   excl.push(`${d.pigtails} insulated ${plural(d.pigtails,'pigtail')} and ${d.bareJumpers} bare ${plural(d.bareJumpers,'jumper')} that stay inside the box`);
@@ -1153,7 +1149,7 @@ function renderTries(){
 }
 
 function newQuestion(){
-  const q=generate($('difficulty').value,$('method').value,$('boxFilter').value);
+  const q=generate($('difficulty').value,$('method').value,$('year').value);
   state.q=q;state.attempts=0;state.done=false;state.result=null;state.qn++;
   renderQuestion();
 }
@@ -1172,8 +1168,7 @@ function renderQuestion(){
   $('figure').innerHTML=drawScene(q);
   $('qTitle').textContent=`Question ${state.qn}`;
   $('qLead').textContent=leadText(q);
-  $('inv').innerHTML=describe(q).map(it=>`<li><span class="tag">${it.tag}</span><span>${it.html}</span></li>`).join('');
-  $('ask').textContent=askText(q);
+  $('inv').innerHTML='';$('ask').textContent='';
   $('fields').innerHTML=q.method==='count'
     ?`<div class="field"><label for="fA">Insulated conductors counted</label><input id="fA" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 9"></div><div class="field"><label for="fB">Total to fit, after adding the Subrule (2) reductions</label><input id="fB" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 12"></div>`
     :`<div class="field"><label for="fA">Required usable space (mL)</label><input id="fA" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 172.2"></div>`;
@@ -1249,94 +1244,56 @@ function onSkip(){
   $('feedback').innerHTML='<div class="notice warn"><b>Skipped.</b>No solution is shown for skipped questions. Move on when you are ready.</div>';
 }
 
-/* ---------- calculator ---------- */
-function initCalc(){
-  let opts='';
-  GROUPS.forEach(g=>{opts+=`<optgroup label="${g[1]}">${BOXES.filter(b=>b.group===g[0]).map(b=>`<option value="${b.id}">${esc(b.name)} · ${b.ml} mL</option>`).join('')}</optgroup>`;});
-  opts+='<option value="custom">Other box (marked volume)</option>';
-  $('bBox').innerHTML=opts;$('bBox').value='o4x15';
-  $('bConductors').innerHTML=SIZES.map(a=>`<div class="field"><label for="bw${a}">No. ${a} AWG</label><input id="bw${a}" type="number" min="0" value="0"></div>`).join('');
-  const autoOpt='<option value="auto">Same as largest conductor</option>'+SIZES.map(a=>`<option value="${a}">No. ${a} AWG</option>`).join('');
-  $('bCapAwg').innerHTML=autoOpt;$('bDevAwg').innerHTML=autoOpt;
-  document.querySelectorAll('#tab-calc input,#tab-calc select').forEach(el=>el.addEventListener('input',updateCalc));
-  $('bReset').addEventListener('click',()=>{
-    SIZES.forEach(a=>$('bw'+a).value=0);
-    ['bCaps','bStuds','bDevices','bDeepN','bBare','bPig'].forEach(i=>$(i).value=0);
-    $('bDepth').value=3.2;$('bBox').value='o4x15';$('bMethod').value='vol';$('bCapAwg').value='auto';$('bDevAwg').value='auto';
-    updateCalc();
-  });
-  updateCalc();
-}
-const ni=id=>Math.max(0,Math.floor(Number($(id).value)||0));
-function updateCalc(){
-  const sel=$('bBox').value,custom=sel==='custom',box=custom?null:boxOf(sel);
-  $('bCustomWrap').classList.toggle('hidden',!custom);
-  const avail=custom?Math.max(0,Number($('bCustom').value)||0):box.ml;
-  const cnt={};SIZES.forEach(a=>cnt[a]=ni('bw'+a));
-  const present=SIZES.filter(a=>cnt[a]>0),L=present.length?Math.min(...present):14;
-  const capA=$('bCapAwg').value==='auto'?L:Number($('bCapAwg').value),devA=$('bDevAwg').value==='auto'?L:Number($('bDevAwg').value);
-  const caps=ni('bCaps'),pairs=Math.floor(caps/2),studs=ni('bStuds'),devs=ni('bDevices'),deepN=Math.min(ni('bDeepN'),devs||ni('bDeepN')),depth=Math.max(0,Number($('bDepth').value)||0);
-  const deepVolume=(deepN>0&&depth>2.54)?deepN*32*depth:0;
-  const rows=[];
-  SIZES.forEach(a=>{if(cnt[a])rows.push([`${cnt[a]} × No. ${a} AWG insulated`,cnt[a]*T22[a]]);});
-  rows.push([`Connectors: ${caps} = ${pairs} ${plural(pairs,'pair')} × No. ${capA}`,pairs*T22[capA]]);
-  rows.push([`Fixture studs: ${studs} × No. ${L}`,studs*T22[L]]);
-  rows.push([`Flush devices: ${devs} × 2 × No. ${devA}`,devs*2*T22[devA]]);
-  if(deepVolume)rows.push([`Deep devices: ${deepN} × 32 cm³ × ${depth} cm`,deepVolume]);
-  const total=r1(rows.reduce((t,x)=>t+x[1],0));
-  const method=$('bMethod').value;
-  let usable=method==='count'&&!custom&&present.length<=1&&!deepVolume&&present.length===1;
-  let pass,used=total,note,statusTxt,statusSub;
-  $('rBox');
-  if(method==='count'&&usable){
-    const base=maxCount(box,L),red=studs+pairs+2*devs,permitted=base-red,counted=cnt[L];
-    pass=counted<=permitted;
-    statusSub=`${counted} counted, ${permitted} permitted`;
-    note=`<b>Table 23 check.</b> Maximum for No. ${L} AWG in ${esc(box.name)} is ${base}. Reduce by ${studs} for studs, ${pairs} for connector pairs and ${2*devs} for devices. That leaves ${permitted}. You have ${counted}.`;
-  }else{
-    pass=total<=avail+1e-9;
-    statusSub=pass?'Required space does not exceed the usable volume.':'Choose a larger box or take something out.';
-    note=method==='count'?'<b>Table 23 count is not available here.</b> It needs a listed box, one wire size and no deep-device adjustment. The result below uses Table 22 volumes instead.':'<b>Table 22 method.</b> Add every allowance and compare the total with the box volume.';
+
+/* ---------- usage tab (password gate) ---------- */
+/* The password is stored only as a SHA-256 hash. This keeps casual visitors out; it is not real security,
+   because the page is public. The GoatCounter dashboard has its own login. */
+const PW_HASH='1bd04ff7546e27eb5754e06e685d021f220d61c6e197ff21139c280703ec3088';
+function sha256(str){
+  const m=unescape(encodeURIComponent(str)),K=[],H=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+  let p=[2],n=3;while(p.length<64){if(p.every(q=>n%q))p.push(n);n++;}
+  p.forEach((q,i)=>{K[i]=Math.floor((Math.cbrt(q)%1)*4294967296)>>>0;});
+  const w=[];for(let i=0;i<m.length;i++)w[i>>2]|=m.charCodeAt(i)<<(24-(i%4)*8);
+  const l=m.length*8;w[l>>5]|=0x80<<(24-l%32);w[((l+64>>9)<<4)+15]=l;
+  const rr=(x,c)=>(x>>>c)|(x<<(32-c));
+  for(let o=0;o<w.length;o+=16){
+    const x=Array.from({length:16},(_,i)=>w[o+i]|0),a=H.slice();
+    for(let i=16;i<64;i++){const s0=rr(x[i-15],7)^rr(x[i-15],18)^(x[i-15]>>>3),s1=rr(x[i-2],17)^rr(x[i-2],19)^(x[i-2]>>>10);x[i]=(x[i-16]+s0+x[i-7]+s1)|0;}
+    for(let i=0;i<64;i++){
+      const S1=rr(a[4],6)^rr(a[4],11)^rr(a[4],25),ch=(a[4]&a[5])^(~a[4]&a[6]),t1=(a[7]+S1+ch+K[i]+x[i])|0;
+      const S0=rr(a[0],2)^rr(a[0],13)^rr(a[0],22),mj=(a[0]&a[1])^(a[0]&a[2])^(a[1]&a[2]),t2=(S0+mj)|0;
+      a[7]=a[6];a[6]=a[5];a[5]=a[4];a[4]=(a[3]+t1)|0;a[3]=a[2];a[2]=a[1];a[1]=a[0];a[0]=(t1+t2)|0;
+    }
+    for(let i=0;i<8;i++)H[i]=(H[i]+a[i])|0;
   }
-  const pct=avail?100*total/avail:0;
-  $('rReq').textContent=mlTxt(total)+' mL';$('rAvail').textContent=avail+' mL';
-  $('rPct').textContent=r1(pct)+'%';$('rMargin').textContent=mlTxt(avail-total)+' mL';
-  $('rStatus').className='result '+(pass?'pass':'fail');
-  $('rStatus').innerHTML=`<strong>${pass?'Acceptable':'Overfilled'}</strong>${statusSub}`;
-  $('rBar').style.width=Math.min(pct,100)+'%';$('rBar').classList.toggle('over',pct>100);
-  $('rRows').innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td class="n">${mlTxt(r[1])}</td></tr>`).join('')+`<tr class="total"><td>Total</td><td class="n">${mlTxt(total)}</td></tr>`;
-  const extra=[];
-  if(caps%2)extra.push('A single unpaired connector adds nothing.');
-  if(ni('bBare')||ni('bPig'))extra.push('Bare bonding conductors and inside pigtails are not counted.');
-  $('rNote').innerHTML=note+(extra.length?'<br>'+extra.join(' '):'');
+  return H.map(v=>(v>>>0).toString(16).padStart(8,'0')).join('');
 }
-
-/* ---------- reference tables ---------- */
-function initRef(){
-  $('t22body').innerHTML=SIZES.map(a=>`<tr><td>No. ${a}</td><td class="n">${T22[a]}</td><td class="n">${T22IN[a]}</td></tr>`).join('');
-  let h='';
-  GROUPS.forEach(g=>{
-    h+=`<tr><th class="grp" colspan="8">${g[1]}</th></tr>`;
-    BOXES.filter(b=>b.group===g[0]).forEach(b=>{
-      h+=`<tr><td>${esc(b.name)}</td><td class="n">${b.ml}</td><td class="n">${b.in3}</td>${SIZES.map(a=>`<td class="n">${maxCount(b,a)}</td>`).join('')}</tr>`;
-    });
-  });
-  $('t23body').innerHTML=h;
+function showUsage(on){
+  $('usageLock').classList.toggle('hidden',on);$('usageBody').classList.toggle('hidden',!on);
+  if(!on){$('pw').value='';return;}
+  if(!$('uFrame').src||$('uFrame').src==='about:blank'||!$('uFrame').dataset.loaded){$('uFrame').src='https://wodan2019.goatcounter.com';$('uFrame').dataset.loaded='1';}
+  fetch('https://wodan2019.goatcounter.com/counter/TOTAL.json').then(r=>r.ok?r.json():Promise.reject()).then(j=>{$('uTotal').textContent=j.count;$('uNote').textContent='';})
+    .catch(()=>{$('uTotal').textContent='—';$('uNote').textContent='The total could not be loaded here. Open the GoatCounter dashboard to see the numbers. If the embedded view below stays blank, your browser or GoatCounter is blocking the frame, so use the button.';});
 }
-
-/* ---------- tabs and init ---------- */
 function switchTab(name){
   state.tab=name;
-  ['practice','calc','ref'].forEach(t=>{
+  ['practice','usage'].forEach(t=>{
     $('tab-'+t).classList.toggle('hidden',t!==name);
     $('tabBtn-'+t).setAttribute('aria-selected',t===name?'true':'false');
   });
+  if(name==='usage'){let ok=false;try{ok=sessionStorage.getItem('bf-usage')==='1';}catch(e){}showUsage(ok);}
 }
+
+/* ---------- tabs and init ---------- */
 function init(){
-  loadScore();renderScore();initCalc();initRef();
+  loadScore();renderScore();
   document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
+  $('pwForm').addEventListener('submit',e=>{e.preventDefault();
+    if(sha256($('pw').value)===PW_HASH){try{sessionStorage.setItem('bf-usage','1');}catch(x){}$('pwErr').classList.add('hidden');showUsage(true);}
+    else{$('pwErr').classList.remove('hidden');$('pw').select();}});
+  $('lockBtn').addEventListener('click',()=>{try{sessionStorage.removeItem('bf-usage');}catch(x){}showUsage(false);});
   $('newQ').addEventListener('click',newQuestion);
-  ['method','difficulty','boxFilter'].forEach(id=>$(id).addEventListener('change',newQuestion));
+  ['method','difficulty','year'].forEach(id=>$(id).addEventListener('change',newQuestion));
   $('ansForm').addEventListener('submit',onSubmit);
   $('showVol').addEventListener('change',refreshChoiceText);
   $('choices').addEventListener('change',()=>{if(!state.done)clearChoiceMarks();});
